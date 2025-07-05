@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tarjetas de Estudio</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      /*quitale la linea de abajo*/
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+     
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      padding: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    h1 {
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    .formulario {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      margin: 5px;
+      width: 250px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    #contador {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .contenedor-tarjetas {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 50px;
+    }
+
+    .tarjeta {
+      width: 220px;
+      height: 140px;
+      background-color: transparent;
+      perspective: 1000px;
+    }
+
+    .contenido-tarjeta {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .tarjeta.volteada .contenido-tarjeta {
+      transform: rotateY(180deg);
+    }
+
+    .frente, .reverso {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .frente {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    .reverso {
+      background-color: #f44336;
+      color: white;
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tarjetas de Estudio</h1>
+
+  <div class="formulario">
+    <input type="text" id="pregunta" placeholder="Escribe la pregunta">
+    <input type="text" id="respuesta" placeholder="Escribe la respuesta">
+    <br>
+    <button onclick="agregarTarjeta()">Agregar Tarjeta</button>
+  </div>
+
+  <p id="contador">Total de tarjetas: 0</p>
+
+  <div class="contenedor-tarjetas" id="contenedorTarjetas"></div>
+
+  <script>
+    function actualizarContador() {
+      const total = document.querySelectorAll(".tarjeta").length;
+      document.getElementById("contador").textContent = `Total de tarjetas: ${total}`;
+    }
+
+    function crearTarjeta(pregunta, respuesta) {
+      const tarjeta = document.createElement("div");
+      tarjeta.className = "tarjeta";
+
+      tarjeta.innerHTML = `
+        <div class="contenido-tarjeta">
+          <div class="frente">${pregunta}</div>
+          <div class="reverso">${respuesta}</div>
+        </div>
+      `;
+
+      tarjeta.addEventListener("click", () => {
+        tarjeta.classList.toggle("volteada");
+      });
+
+      tarjeta.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+        if (confirm("¿Deseas eliminar esta tarjeta?")) {
+          tarjeta.remove();
+          actualizarContador();
+        }
+      });
+
+      document.getElementById("contenedorTarjetas").appendChild(tarjeta);
+      actualizarContador();
+    }
+
+    function agregarTarjeta() {
+      const pregunta = document.getElementById("pregunta").value.trim();
+      const respuesta = document.getElementById("respuesta").value.trim();
+
+      if (pregunta === "" || respuesta === "") {
+        alert("Por favor, escribe una pregunta y una respuesta.");
+        return;
+      }
+
+      crearTarjeta(pregunta, respuesta);
+
+      document.getElementById("pregunta").value = "";
+      document.getElementById("respuesta").value = "";
+    }
+
+    
+    const tarjetasIniciales = [
+      { pregunta: "¿Cuál es la capital de Francia?", respuesta: "París" },
+      { pregunta: "¿Quién escribió 'Cien años de soledad'?", respuesta: "Gabriel García Márquez" },
+      { pregunta: "¿Cuánto es 8 × 7?", respuesta: "56" },
+      { pregunta: "¿Qué planeta es conocido como el planeta rojo?", respuesta: "Marte" }
+    ];
+
+    tarjetasIniciales.forEach(t => crearTarjeta(t.pregunta, t.respuesta));
+  </script>
+
+</body>
+</html>
